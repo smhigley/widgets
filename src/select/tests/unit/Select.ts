@@ -160,7 +160,6 @@ const expectedSingle = function(useTestProperties = false, withStates = false, o
 		}, [
 			w(Listbox, {
 				activeIndex,
-				focus,
 				widgetId: useTestProperties ? 'foo' : '',
 				key: 'listbox',
 				optionData: useTestProperties ? testOptions : [],
@@ -398,7 +397,6 @@ registerSuite('Select', {
 							w(Listbox, {
 								activeIndex: 0,
 								widgetId: '',
-								focus: false,
 								key: 'listbox',
 								optionData: simpleOptions,
 								tabIndex: -1,

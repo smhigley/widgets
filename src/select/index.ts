@@ -3,6 +3,7 @@ import { diffProperty } from '@dojo/widget-core/decorators/diffProperty';
 import { reference } from '@dojo/widget-core/diff';
 import { DNode } from '@dojo/widget-core/interfaces';
 import { ThemedMixin, ThemedProperties, theme } from '@dojo/widget-core/mixins/Themed';
+import { FocusMixin } from '@dojo/widget-core/mixins/Focus';
 import Focus from '@dojo/widget-core/meta/Focus';
 import { v, w } from '@dojo/widget-core/d';
 import uuid from '@dojo/core/uuid';
@@ -45,7 +46,7 @@ export interface SelectProperties extends ThemedProperties, InputProperties, Lab
 	value?: string;
 }
 
-export const ThemedBase = ThemedMixin(WidgetBase);
+export const ThemedBase = FocusMixin(ThemedMixin(WidgetBase));
 
 @theme(css)
 @diffProperty('options', reference)
@@ -77,7 +78,6 @@ export const ThemedBase = ThemedMixin(WidgetBase);
 	]
 })
 export class SelectBase<P extends SelectProperties = SelectProperties> extends ThemedBase<P, null> {
-	private _callListboxFocus = false;
 	private _focusedIndex = 0;
 	private _ignoreBlur = false;
 	private _open = false;
@@ -113,10 +113,10 @@ export class SelectBase<P extends SelectProperties = SelectProperties> extends T
 
 	// custom select events
 	private _openSelect() {
-		this._callListboxFocus = true;
 		this._ignoreBlur = true;
 		this._open = true;
 		this._focusedIndex = this._focusedIndex || 0;
+		this.focus('listbox');
 		this.invalidate();
 	}
 
@@ -129,7 +129,7 @@ export class SelectBase<P extends SelectProperties = SelectProperties> extends T
 	private _onDropdownKeyDown(event: KeyboardEvent) {
 		event.stopPropagation();
 		if (event.which === Keys.Escape) {
-			this.meta(Focus).set('trigger');
+			this.focus('trigger');
 			this._closeSelect();
 		}
 	}
@@ -262,12 +262,6 @@ export class SelectBase<P extends SelectProperties = SelectProperties> extends T
 			_focusedIndex
 		} = this;
 
-		const focusListbox = this._callListboxFocus;
-
-		if (this._callListboxFocus) {
-			this._callListboxFocus = false;
-		}
-
 		// create dropdown trigger and select box
 		return v('div', {
 			key: 'wrapper',
@@ -283,7 +277,6 @@ export class SelectBase<P extends SelectProperties = SelectProperties> extends T
 					key: 'listbox',
 					activeIndex: _focusedIndex,
 					widgetId: widgetId,
-					focus: focusListbox,
 					optionData: options,
 					tabIndex: _open ? 0 : -1,
 					getOptionDisabled,
@@ -297,7 +290,7 @@ export class SelectBase<P extends SelectProperties = SelectProperties> extends T
 					},
 					onOptionSelect: (option: any) => {
 						onChange && onChange(option, key);
-						this.meta(Focus).set('trigger');
+						this.focus('trigger');
 						this._closeSelect();
 					}
 				})

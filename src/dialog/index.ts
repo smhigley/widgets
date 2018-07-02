@@ -1,6 +1,7 @@
 import { DNode } from '@dojo/widget-core/interfaces';
 import { WidgetBase } from '@dojo/widget-core/WidgetBase';
 import { I18nMixin } from '@dojo/widget-core/mixins/I18n';
+import { FocusMixin } from '@dojo/widget-core/mixins/Focus';
 import { ThemedMixin, ThemedProperties, theme } from '@dojo/widget-core/mixins/Themed';
 import Focus from '@dojo/widget-core/meta/Focus';
 import { v, w } from '@dojo/widget-core/d';
@@ -52,7 +53,7 @@ export interface DialogProperties extends ThemedProperties, CustomAriaProperties
 	underlay?: boolean;
 }
 
-export const ThemedBase = I18nMixin(ThemedMixin(WidgetBase));
+export const ThemedBase = FocusMixin(I18nMixin(ThemedMixin(WidgetBase)));
 
 @theme(css)
 @customElement<DialogProperties>({
@@ -112,7 +113,7 @@ export class DialogBase<P extends DialogProperties = DialogProperties> extends T
 		}
 
 		if (this._callFocus) {
-			this.meta(Focus).set('main');
+			this.focus('main');
 		}
 	}
 

@@ -1,12 +1,13 @@
 import { DNode } from '@dojo/widget-core/interfaces';
 import { WidgetBase } from '@dojo/widget-core/WidgetBase';
+import { FocusMixin } from '@dojo/widget-core/mixins/Focus';
 import { WidgetProperties } from '@dojo/widget-core/interfaces';
 import { ProjectorMixin } from '@dojo/widget-core/mixins/Projector';
 import { v, w } from '@dojo/widget-core/d';
 import Focus from '@dojo/widget-core/meta/Focus';
 import Dialog from '../../dialog/index';
 
-export class App extends WidgetBase<WidgetProperties> {
+export class App extends FocusMixin(WidgetBase)<WidgetProperties> {
 	private _modal = false;
 	private _underlay = false;
 	private _closeable = true;
@@ -49,7 +50,7 @@ export class App extends WidgetBase<WidgetProperties> {
 				closeable: this._closeable,
 				onRequestClose: () => {
 					this._open = false;
-					this.meta(Focus).set('button');
+					this.focus('button');
 					this.invalidate();
 				}
 			}, [

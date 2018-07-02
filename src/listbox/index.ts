@@ -5,6 +5,7 @@ import { DNode } from '@dojo/widget-core/interfaces';
 import { CustomAriaProperties } from '../common/interfaces';
 import { formatAriaProperties, Keys } from '../common/util';
 import MetaBase from '@dojo/widget-core/meta/Base';
+import { FocusMixin } from '@dojo/widget-core/mixins/Focus';
 import { ThemedMixin, ThemedProperties, theme } from '@dojo/widget-core/mixins/Themed';
 import uuid from '@dojo/core/uuid';
 import { v, w } from '@dojo/widget-core/d';
@@ -36,7 +37,6 @@ export class ScrollMeta extends MetaBase {
  * @property getOptionId          Function that accepts option data and returns a string ID
  * @property getOptionSelected    Function that accepts option data and returns a boolean for selected/unselected
  * @property widgetId               Optional custom id for the root node of the listbox
- * @property focus                Indicates if the listbox needs focusing
  * @property multiselect          Adds currect semantics for a multiselect listbox
  * @property optionData           Array of data for listbox options
  * @property tabIndex             Listbox is in the focus order by default, but setting tabIndex: -1 will remove it
@@ -52,7 +52,6 @@ export interface ListboxProperties extends ThemedProperties, CustomAriaPropertie
 	getOptionLabel?(option: any, index: number): DNode;
 	getOptionSelected?(option: any, index: number): boolean;
 	widgetId?: string;
-	focus?: boolean;
 	multiselect?: boolean;
 	optionData?: any[];
 	tabIndex?: number;
@@ -62,7 +61,7 @@ export interface ListboxProperties extends ThemedProperties, CustomAriaPropertie
 	onOptionSelect?(option: any, index: number, key?: string | number): void;
 }
 
-export const ThemedBase = ThemedMixin(WidgetBase);
+export const ThemedBase = FocusMixin(ThemedMixin(WidgetBase));
 
 @theme(css)
 @diffProperty('optionData', reference)
@@ -70,7 +69,6 @@ export const ThemedBase = ThemedMixin(WidgetBase);
 	tag: 'dojo-listbox',
 	properties: [
 		'activeIndex',
-		'focus',
 		'multiselect',
 		'tabIndex',
 		'visualFocus',
@@ -92,6 +90,7 @@ export const ThemedBase = ThemedMixin(WidgetBase);
 export class ListboxBase<P extends ListboxProperties = ListboxProperties> extends ThemedBase<P, null> {
 	private _boundRenderOption = this.renderOption.bind(this);
 	private _idBase = uuid();
+	public focusKey = 'root';
 
 	private _getOptionDisabled(option: any, index: number) {
 		const { getOptionDisabled } = this.properties;
@@ -239,16 +238,11 @@ export class ListboxBase<P extends ListboxProperties = ListboxProperties> extend
 			aria = {},
 			widgetId,
 			multiselect = false,
-			focus,
 			tabIndex = 0
 		} = this.properties;
 		const themeClasses = this.getModifierClasses();
 
 		return v('div', () => {
-			if (focus) {
-				this.meta(Focus).set('root');
-			}
-
 			return {
 				...formatAriaProperties(aria),
 				'aria-activedescendant': this._getOptionId(activeIndex),

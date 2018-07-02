@@ -27,7 +27,7 @@
     "@dojo/has": "^2.0.0",
     "@dojo/i18n": "^2.0.0",
     "@dojo/shim": "^2.0.0",
-    "@dojo/widget-core": "^2.0.0"
+    "@dojo/widget-core": "file:./deps/dojo-widget-core-2.0.7-rc.1.tgz"
   },
   "devDependencies": {
     "@dojo/cli": "^2.0.0",
@@ -52,6 +52,7 @@
     "typescript": "~2.6.1"
   },
   "dependencies": {
-    "tslib": "~1.8.1"
+    "tslib": "~1.8.1",
+    "wicg-inert": "^1.1.6"
   }
 }
